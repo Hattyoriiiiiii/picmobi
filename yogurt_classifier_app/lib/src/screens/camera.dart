@@ -1,32 +1,37 @@
-// import 'dart:io';
+import 'dart:io';
 import 'package:flutter/material.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
 
-class CameraScreen extends StatelessWidget {
+class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);
 
-  // XFile? _image;
-  // final ImagePicker = ImagePicker();
+  @override
+  _CameraScreenState createState() => _CameraScreenState();
+}
 
-  // // カメラから画像を取得するメソッド
-  // Future getImageFromCamera() async {
-  //   final pickedFile = await imagePicker.pickImage(source: ImageSource.camera);
-  //   setState(() {
-  //     if (pickedFile != null) {
-  //       _image = XFile(pickedFile.path);
-  //     }
-  //   });
-  // }
+class _CameraScreenState extends State<CameraScreen> {
+  File? _image;
+  final ImagePicker imagePicker = ImagePicker();
 
-  // // ギャラリーから画像を取得するメソッド
-  // Future getImageFromGarally() async {
-  //   final pickedFile = await ImagePicker.pickImage(source: ImageSource.gallery);
-  //   setState(() {
-  //     if (pickedFile != null) {
-  //       _image = XFile(pickedFile.path)
-  //     }
-  //   });
-  // }
+  // カメラから画像を取得するメソッド
+  Future getImageFromCamera() async {
+    final pickedFile = await imagePicker.getImage(source: ImageSource.camera);
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      }
+    });
+  }
+
+  // ギャラリーから画像を取得するメソッド
+  Future getImageFromGallery() async {
+    final pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,28 +39,40 @@ class CameraScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('撮影'),
       ),
-
-      // body: const Center(
-      //   child: _image == null
-      //     ? Text(
-      //       '写真を選択してください',
-      //       // style: Theme.of(context).textTheme.headline4,
-      //       style: TextStyle(fontSize: 32.0)
-      //       )
-          // : Image.file(_image!.path)),
-      body:
-          const Center(child: Text('撮影画面', style: TextStyle(fontSize: 32.0))),
-
-      floatingActionButton: 
-        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          FloatingActionButton(
-            onPressed: null, // getImageFromCamera,
-            child: const Icon(Icons.photo_camera)
+      body: Center(
+        child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                width: 300,
+                child: _image == null
+                    ? Center(child: Text('No image selected.', style: TextStyle(fontSize: 24.0)))
+                    : Image.file(_image!),
+              ),
+            ),
           ),
-          FloatingActionButton(
-            onPressed: null, //getImageFromGarally,
-            child: const Icon(Icons.photo_album),
-          )
-    ]));
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              FloatingActionButton(
+                onPressed: getImageFromCamera, //カメラから画像を取得
+                tooltip: 'Pick Image From Camera',
+                child: Icon(Icons.add_a_photo),
+              ),
+              FloatingActionButton(
+                onPressed: getImageFromGallery, //ギャラリーから画像を取得
+                tooltip: 'Pick Image From Gallery',
+                child: Icon(Icons.photo_library),
+              ),
+              ],
+            ),
+            SizedBox(height: 20), // 余白を追加
+          ],
+        ),
+      ),
+    );
   }
 }
