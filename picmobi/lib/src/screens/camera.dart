@@ -14,7 +14,8 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen> {
   File? _image;
   final ImagePicker imagePicker = ImagePicker();
-  String? _label; // 追加
+  String? _label; // ラベルを保存する変数
+  int _quantity = 0; // 個数を保存する変数
 
   Future<void> predictImage() async {
     if (_image == null) return;
@@ -83,6 +84,31 @@ class _CameraScreenState extends State<CameraScreen> {
             Text(
               _label ?? 'No label',
               style: TextStyle(fontSize: 24.0),
+            ),
+            Row( // 個数を選ぶボタンを追加
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _quantity = (_quantity > 0) ? _quantity - 1 : 0; // 個数を減らす
+                    });
+                  },
+                  icon: Icon(Icons.remove),
+                ),
+                Text(
+                  '$_quantity',
+                  style: TextStyle(fontSize: 24.0),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _quantity += 1; // 個数を増やす
+                    });
+                  },
+                  icon: Icon(Icons.add),
+                ),
+              ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
